@@ -77,7 +77,7 @@ public class Application {
     /**
      * This method is used to query the list of numbers.
      * Uses two types of queries: inserting and deleting.
-     * After the user performs the desired queries it returns a linked list with the new values.
+     * After the user chooses which type of query to execute, the method then invokes the method that contains the chosen query type.
      *
      * @param numbers a list of numbers.
      * @return the same list that it was provided with, but now containing the modifications.
@@ -87,7 +87,6 @@ public class Application {
         int amountOfQueries = 0;
         int counterOfQueries = 0;
         String insertOrDelete = "";
-        double numbersForQuery = 0;
         boolean appropriateQueryValues = true;
 
 
@@ -111,78 +110,105 @@ public class Application {
                     }
                 }
                 if (insertOrDelete.equals("insert")) {
-                    System.out.print("Enter the position and number separated by space: ");
-                    String[] numberOfQueries = input.nextLine().split("\\s");
-
-                    for (int index = 0; index < numberOfQueries.length; index++) {
-                        if (numberOfQueries[index].matches("[0-9]+")) {
-                            numbersForQuery = Double.parseDouble(numberOfQueries[index]);
-
-                            if (numbersForQuery > Integer.MAX_VALUE) {
-                                System.out.println("Please enter a smaller number.");
-                                appropriateQueryValues = false;
-                                counterOfQueries--;
-                                break;
-                            }
-                            if (numberOfQueries.length > 2) {
-                                System.out.println("Please enter no more then 2 numbers.");
-                                counterOfQueries--;
-                                appropriateQueryValues = false;
-                                break;
-                            }
-                            if (numberOfQueries.length < 2) {
-                                System.out.println("Please enter 2 numbers.");
-                                counterOfQueries--;
-                                appropriateQueryValues = false;
-                                break;
-                            }
-                            if (numbersForQuery < 0) {
-                                System.out.println("Please enter only positive numbers.");
-                                counterOfQueries--;
-                                appropriateQueryValues = false;
-                                break;
-                            }
-                            if (Integer.parseInt(numberOfQueries[0]) > numbers.size()) {
-                                System.out.println("Index does not exist.");
-                                appropriateQueryValues = false;
-                                counterOfQueries--;
-                                break;
-                            }
-
-                            appropriateQueryValues = true;
-
-                        } else {
-                            System.out.println("You have entered a string of characters. " +
-                                    "Please enter the numbers again.");
-                            counterOfQueries--;
-                            appropriateQueryValues = false;
-                            break;
-                        }
-                    }
-                    if (appropriateQueryValues == true) {
-                        numbers.add(Integer.parseInt(numberOfQueries[0]), Integer.parseInt(numberOfQueries[1]));
-                    }
+                    numbers = insertingIntoTheList(numbers);
                 } else if (insertOrDelete.equals("delete")) {
-                    int position = 0;
-                    while (true) {
-                        position = Integer.parseInt(getInput(input, "Enter the position: "));
-                        if (position < 0) {
-                            System.out.println("Please enter only a positive number.");
-                        }
-                        if (position <= numbers.size()) {
-                            numbers.remove(position);
-                            break;
-                        } else {
-                            System.out.println("Index does not exist.");
-                        }
-                    }
+                    numbers = deletingFromTheList(numbers);
                 }
 
                 counterOfQueries++;
         }
         return numbers;
     }
-    
+
+    /**
+     * This method is used to insert a given number into a specific position in the list.
+     *
+     * @param numbers a linked list containing numbers.
+     * @return a linked list with the new elements added.
+     */
+    private LinkedList<Integer> insertingIntoTheList(LinkedList<Integer> numbers)
+    {
+        Scanner input = new Scanner(System.in);
+        double numbersForQuery = 0;
+        boolean appropriateQueryValues = true;
+
+        while(true) {
+            System.out.print("Enter the position and number separated by space: ");
+            String[] numberOfQueries = input.nextLine().split("\\s");
+
+            for (int index = 0; index < numberOfQueries.length; index++) {
+                if (numberOfQueries[index].matches("[0-9]+")) {
+                    numbersForQuery = Double.parseDouble(numberOfQueries[index]);
+
+                    if (numbersForQuery > Integer.MAX_VALUE) {
+                        System.out.println("Please enter a smaller number.");
+                        appropriateQueryValues = false;
+                        break;
+                    }
+                    if (numberOfQueries.length > 2) {
+                        System.out.println("Please enter no more then 2 numbers.");
+                        appropriateQueryValues = false;
+                        break;
+                    }
+                    if (numberOfQueries.length < 2) {
+                        System.out.println("Please enter 2 numbers.");
+                        appropriateQueryValues = false;
+                        break;
+                    }
+                    if (numbersForQuery < 0) {
+                        System.out.println("Please enter only positive numbers.");
+                        appropriateQueryValues = false;
+                        break;
+                    }
+                    if (Integer.parseInt(numberOfQueries[0]) > numbers.size()) {
+                        System.out.println("Index does not exist.");
+                        appropriateQueryValues = false;
+                        break;
+                    }
+
+                    appropriateQueryValues = true;
+
+                } else {
+                    System.out.println("You have entered a string of characters. " +
+                            "Please enter the numbers again.");
+                    appropriateQueryValues = false;
+                    break;
+                }
+            }
+
+            if (appropriateQueryValues == true) {
+                numbers.add(Integer.parseInt(numberOfQueries[0]), Integer.parseInt(numberOfQueries[1]));
+                break;
+            }
+        }
+
+        return numbers;
+    }
+
+    /**
+     * This method is used to delete a given number from a list.
+     *
+     * @param numbers a linked list of numbers.
+     * @return a list with the new elements.
+     */
+    private LinkedList<Integer> deletingFromTheList(LinkedList<Integer> numbers){
+        int position = 0;
+        Scanner input = new Scanner(System.in);
+
+        while (true) {
+            position = Integer.parseInt(getInput(input, "Enter the position: "));
+            if (position < 0) {
+                System.out.println("Please enter only a positive number.");
+            }
+            if (position <= numbers.size()) {
+                numbers.remove(position);
+                break;
+            } else {
+                System.out.println("Index does not exist.");
+            }
+        }
+        return numbers;
+    }
 
     /**
      * This method is used to get the input from the user and use the isInteger method which verifies if the input
